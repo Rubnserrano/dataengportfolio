@@ -94,7 +94,7 @@ payment_type_dim = payment_type_dim.withColumn("payment_type_name", when(col("pa
 
 payment_type_dim = payment_type_dim.select(*[['payment_type_id', 'payment_type', 'payment_type_name']])
 
-taxi_zone = spark.read.csv("gs://tlc-nyc-data/taxi_zone.csv", header = True)
+taxi_zone = spark.read.csv("gs://batch_taxis/taxi_zone.csv", header = True)
 
 
 pickup_location_dim = sample_df[['PULocationID']]
@@ -130,10 +130,19 @@ fact_table = fact_table.select(*[['trip_id','VendorID', 'datetime_id', 'passenge
                'improvement_surcharge', 'airport_fee', 'congestion_surcharge', 'total_amount']])
 fact_table.show(10)
 
-fact_table.write.csv("gs://batch_taxis/data.csv")
-df.write.format("bigquery") \
-    .option("table", "taxi-project-405909.data_taxi_batch") \
-    .mode("overwrite") \
-    .save()
+# fact_table.write.csv("gs://batch_taxis/data.csv")
+# fact_table.write.format("bigquery") \
+#     .option("table", "data_taxi_batch.clean_data") \
+#     .save()
 
-spark.stop()    
+gcs_bucket = 'batch_taxis'
+gcs_filepath = 'gs://batch_taxis/data.csv'.format(gcs_bucket)
+
+fact_table.write \
+  .mode('overwrite') \
+  .csv(gcs_filepath)
+
+fact_table.printSchema()
+
+
+spark.stop()
