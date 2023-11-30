@@ -11,7 +11,7 @@ from pyspark.sql.functions import monotonically_increasing_id
 from pyspark.sql.functions import col
 
 
-sample_df = df.sample(fraction=1.0, withReplacement=False, seed=42)
+sample_df = df.sample(fraction=0.01, withReplacement=False, seed=42)
 sample_df = sample_df.withColumn('trip_id', monotonically_increasing_id())
 
 datetime_dim = sample_df[['tpep_pickup_datetime','tpep_dropoff_datetime']]
@@ -129,20 +129,29 @@ fact_table = fact_table.select(*[['trip_id','VendorID', 'datetime_id', 'passenge
                'payment_type_id', 'fare_amount', 'extra', 'mta_tax', 'tip_amount', 'tolls_amount',
                'improvement_surcharge', 'airport_fee', 'congestion_surcharge', 'total_amount']])
 fact_table.show(10)
+fact_table.printSchema()
 
-# fact_table.write.csv("gs://batch_taxis/data.csv")
+# fact_table.write.csv("gs://batch_taxis/data001.csv")
 # fact_table.write.format("bigquery") \
 #     .option("table", "data_taxi_batch.clean_data") \
 #     .save()
+bucket = "batch_taxis"
+spark.conf.set('temporaryGcsBucket', bucket)
 
-gcs_bucket = 'batch_taxis'
-gcs_filepath = 'gs://batch_taxis/data.csv'.format(gcs_bucket)
 
-fact_table.write \
-  .mode('overwrite') \
-  .csv(gcs_filepath)
 
-fact_table.printSchema()
+# Save the data to BigQuery
+fact_table.write.format('bigquery') \
+  .option('table', 'data_taxi_batch.conectorbien') \
+  .save()
+
+
+
+# gcs_bucket = 'batch_taxis'
+# gcs_filepath = 'gs://batch_taxis/data001.csv'.format(gcs_bucket)
+# fact_table.write \
+#   .mode('overwrite') \
+#   .csv(gcs_filepath)
 
 
 spark.stop()
