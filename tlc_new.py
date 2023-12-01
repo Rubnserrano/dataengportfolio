@@ -55,11 +55,6 @@ rate_code_type = {
 
 rate_code_dim = sample_df[['RatecodeID']]
 rate_code_dim = rate_code_dim.withColumn("rate_code_id", monotonically_increasing_id())
-
-# ¿Por qué esto no funciona? Que forma tengo de hacerlo más eficaz?
-# for code, name in rate_code_type.items():
-#     rate_code_dim = rate_code_dim.withColumn("rate_code_name", when(col("RatecodeID") == code, name))
-
 rate_code_dim = rate_code_dim.withColumn("rate_code_name", when(col("RatecodeID") == 1, rate_code_type[1])
     .when(col("RatecodeID") == 2, rate_code_type[2])
     .when(col("RatecodeID") == 3, rate_code_type[3])
@@ -82,7 +77,6 @@ payment_type_name = {
 payment_type_dim = sample_df[['payment_type']]
 payment_type_dim = payment_type_dim.withColumn("payment_type_id", monotonically_increasing_id())
 
-
 payment_type_dim = payment_type_dim.withColumn("payment_type_name", when(col("payment_type") == 1, rate_code_type[1])
     .when(col("payment_type") == 2, payment_type_name[2])
     .when(col("payment_type") == 3, payment_type_name[3])
@@ -91,11 +85,9 @@ payment_type_dim = payment_type_dim.withColumn("payment_type_name", when(col("pa
     .when(col("payment_type") == 6, payment_type_name[6])
     .otherwise("Unknown"))
 
-
 payment_type_dim = payment_type_dim.select(*[['payment_type_id', 'payment_type', 'payment_type_name']])
 
 taxi_zone = spark.read.csv("gs://batch_taxis/taxi_zone.csv", header = True)
-
 
 pickup_location_dim = sample_df[['PULocationID']]
 pickup_location_dim = pickup_location_dim.withColumn('pickup_location_id', monotonically_increasing_id())
@@ -133,10 +125,6 @@ fact_table.printSchema()
 
 tablesnames = ['passenger_count_dim', 'trip_distance_dim','rate_code_dim','datetime_dim', 'payment_type_dim', 'pickup_location_dim', 'drop_location_dim']
 
-# fact_table.write.csv("gs://batch_taxis/data001.csv")
-# fact_table.write.format("bigquery") \
-#     .option("table", "data_taxi_batch.clean_data") \
-#     .save()
 bucket = "batch_taxis"
 spark.conf.set('temporaryGcsBucket', bucket)
 
@@ -149,15 +137,5 @@ for tablasaux, rutasaux in zip(tablesnames, rutasnames):
     .option('table', rutasaux) \
     .option('mode', 'overwrite') \
     .save()
-  
-
-
-
-# gcs_bucket = 'batch_taxis'
-# gcs_filepath = 'gs://batch_taxis/data001.csv'.format(gcs_bucket)
-# fact_table.write \
-#   .mode('overwrite') \
-#   .csv(gcs_filepath)
-
 
 spark.stop()
