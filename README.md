@@ -11,8 +11,8 @@
 
 - 📫 How to reach me **contactorubenserrano@gmail.com**
 
-<h3 align="left">Connect with me: **linkedin.com/Rubnserrano**</h3>
-<p align="left">
+<h3 align="left">Connect with me:[linkedin.com/Rubnserrano] (linkedin.com/Rubnserrano) </h3>
+<p align="left"> 
 </p>
 
 <h3 align="left">Languages and Tools:</h3>
