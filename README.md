@@ -11,10 +11,11 @@
 
 - 📫 How to reach me **contactorubenserrano@gmail.com**
 
+- 💼 Linkedin profile **linkedin.com/Rubnserrano**
+
 <h3 align="left">Connect with me: </h3>
 <p align="left"> 
 </p>
-  [linkedin.com/Rubnserrano] (linkedin.com/Rubnserrano)
 
 
 <h3 align="left">Languages and Tools:</h3>
